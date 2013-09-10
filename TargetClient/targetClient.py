@@ -7,7 +7,15 @@ import os
 import json
 import RPi.GPIO as GPIO
 
+REQUEST_TYPE = "request"
+MISC_MSG_TYPE = "misMsg"
+DEBUG_TYPE = "debug"
+
 #JSONification of Messages 
+# createJSONMsg
+# idval: UIUD value given to session
+# typeval: type of message
+# message: any misc. message
 def createJSONMsg(source, typeval, message):
   retVal =  { "source" : source , "type" : typeval , "message" : message }
   return json.dumps(retVal)
