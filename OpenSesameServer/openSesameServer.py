@@ -52,6 +52,9 @@ class WSHandler(tornado.websocket.WebSocketHandler):
       if typeval == MISC_MSG_TYPE and not session_from == None:
         buildMsg = session_from.id.hex + ": " + message
 	sessionFrom = session_from.id.hex
+      elif typeval == REQUEST_TYPE and not session_from == None:
+	buildMsg = message
+	sessionFrom = session_from.id.hex
       else:
         buildMsg = message
 	sessionFrom = None
