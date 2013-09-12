@@ -37,23 +37,25 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     del r[key]
     return r
 
-  def sendMsgWrapper(session_to,session_from,typeval,message):
-    buildMsg = ""
-    if typeval == MISC_MSG_TYPE and not session_from == None:
-      buildMsg = session_from.id.hex + ": " + message
-    else:
-      buildMsg = message
-    session_to.write_message(createJSONMsg(session_from.id.hex,typeval, buildMsg))
-
   def open(self):
     self.id = uuid.uuid4()
-    sendMsgWrapper(self,None,MISC_MSG_TYPE,"You are now connected to the OpenSesame Server. You are Client "+self.id.hex)
+    self.write_message(createJSONMsg(None, MISC_MSG_TYPE, "You are now connected to the OpenSesame Server. You are Client "+self.id.hex))
     for key in self.clients:
-      sendMsgWrapper(self.clients[key],self,MISC_MSG_TYPE,"I have entered the server")
+      self.clients[key].write_message(createJSONMsg(self.id.hex, MISC_MSG_TYPE, "A new client has enetered the server"))
     self.clients[self.id.hex] = self
     logging.info('Connection '+self.id.hex+' was opened')
 
   def on_message(self, message):
+    def sendMsgWrapper(session_to,session_from,typeval,message):
+      buildMsg = ""
+      sessionFrom = ""
+      if typeval == MISC_MSG_TYPE and not session_from == None:
+        buildMsg = session_from.id.hex + ": " + message
+	sessionFrom = session_from.id.hex
+      else:
+        buildMsg = message
+	sessionFrom = None
+      session_to.write_message(createJSONMsg(sessionFrom, typeval, buildMsg))
     global target
     logging.info('Incoming message:' +  message)
 
@@ -77,7 +79,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     logging.info('Connection '+self.id.hex+' was closed...')
     del self.clients[self.id.hex]
     for key in self.clients:
-      sendMsgWrapper(self.clients[key],None,MISC_MSG_TYPE,"A client has left the server")
+      self.clients[key].write_message(createJSONMsg(None, MISC_MSG_TYPE, "A client has left the server"))
 
 application = tornado.web.Application([
   (r'/ws', WSHandler),
