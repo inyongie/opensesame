@@ -47,7 +47,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
   def open(self):
     self.id = uuid.uuid4()
-    sendMsgWrapper(self,None,MISC_MSG_TYPE,"You are now connected to the OpenSesame Server. You are Client "+self.id.hex))
+    sendMsgWrapper(self,None,MISC_MSG_TYPE,"You are now connected to the OpenSesame Server. You are Client "+self.id.hex)
     for key in self.clients:
       sendMsgWrapper(self.clients[key],self,MISC_MSG_TYPE,"I have entered the server")
     self.clients[self.id.hex] = self
