@@ -74,7 +74,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     elif decodedMsg["type"] == MISC_MSG_TYPE:
       for key in self.clients:
         if not target == None and not self.clients[key].id.hex == target.id.hex and not self.id.hex == target.id.hex:
-          sendMsgWrapper(self.clients[key], self, MISC_MSG_TYPE, message)
+          sendMsgWrapper(self.clients[key], self, MISC_MSG_TYPE, decodedMsg["message"])
     elif decodedMsg["type"] == DEBUG_TYPE:
       sendMsgWrapper(target,self,DEBUG_TYPE,"Response ping from OpenSesame Server")
 
