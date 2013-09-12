@@ -18,30 +18,34 @@
           var sec = now.getSeconds();
           var min = now.getMinutes();
           var hr = now.getHours();
-	  if(sec < 10) {
-	    sec = "0"+sec;
-	  }
-	  if(min < 10) {
-	    min = "0"+min;
-	  }
-	  if(hr < 10) {
-	    hr = "0"+hr;
-	  }
-          $("#log").html($("#log").html() + "<br/>" + hr + ":" + min + ":" + sec + " - " +  msg);
+          if(sec < 10) {
+            sec = "0"+sec;
+          }
+      	  if(min < 10) {
+      	    min = "0"+min;
+      	  }
+      	  if(hr < 10) {
+      	    hr = "0"+hr;
+      	  }
+          var decodedMsg = JSON.parse(msg);
+          $("#log").html($("#log").html() + "<br/>" + hr + ":" + min + ":" + sec + " - " +  decodedMsg.message);
           //$("#log").animate({ scrollTop: $('#log')[0].scrollHeight}, 100);
           $('#log').scrollTop($('#log')[0].scrollHeight);
         }
  
         var sender = function() {
           var msg = $("#msg").val();
-          if (msg.length > 0)
-            ws.send(msg);
+          if (msg.length > 0) {
+            if(msg == "open")
+              ws.send('{"type":"request"}');
+            else
+              ws.send('{"type":"miscMsg","message":"'+msg+'"}');
+          }
           $("#msg").val(msg);
         }
  
         ws = new WebSocket("ws://inyongie.com:8888/ws");
         ws.onmessage = function(evt) {
- 
           logger(evt.data);
         };
         ws.onclose = function(evt) { 
@@ -50,20 +54,20 @@
         };
         ws.onopen = function(evt) { $("#log").text("Opening socket..."); };
 
-	var clearTextBox = function() {
-	  $("#msg").val('');
-	}
+      	var clearTextBox = function() {
+      	  $("#msg").val('');
+      	}
  
         $("#msg").keypress(function(event) {
           if (event.which == 13) {
              sender();
-	     clearTextBox();
+      	     clearTextBox();
            }
         });
  
         $("#thebutton").click(function(){
           sender();
-	  clearTextBox();
+      	  clearTextBox();
         });
       });
     </script>

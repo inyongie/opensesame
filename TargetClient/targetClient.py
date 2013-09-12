@@ -7,7 +7,9 @@ import os
 import json
 import RPi.GPIO as GPIO
 
+STARTUP_TYPE = "startup"
 REQUEST_TYPE = "request"
+ACK_TYPE = "ack"
 MISC_MSG_TYPE = "misMsg"
 DEBUG_TYPE = "debug"
 
