@@ -29,9 +29,9 @@ def on_message(ws, message):
   logging.info('Message: '+message)
   decodedMsg = json.loads(message)
   if decodedMsg["type"] == REQUEST_TYPE:
-    print 'Open request received. Executing request and sending response ' + reqID.group(1)
-    logging.info('Open request received. Executing request and sending response ' + reqID.group(1))
-    sendMsgWrapper(ws,decodedMsg["id"],ACK_TYPE,"")
+    print 'Open request received. Executing request and sending response ' + decodedMsg["id"]
+    logging.info('Open request received. Executing request and sending response ' + decodedMsg["id"])
+    ws.send(createJSONMsg(decodedMsg["id"], ACK_TYPE, ""))
     os.system("echo 5=200 > /dev/servoblaster")
     time.sleep(2)
     os.system("echo 5=100 > /dev/servoblaster")
@@ -54,10 +54,10 @@ def on_open(ws):
       var = 1
       while var==1:
         time.sleep(50)
-        sendMsgWrapper(ws, None, DEBUG_TYPE, "raspiping")
+	ws.send(createJSONMsg(None, DEBUG_TYPE, "raspiping"))
         logging.info("sending ping")
   logging.info("Initializing Connection")
-  sendMsgWrapper(ws, None, STARTUP_TYPE, "iamtheraspi")
+  ws.send(createJSONMsg(None, STARTUP_TYPE, "iamtheraspi"))
   thread.start_new_thread(wakeup, ())
 
 def init():
