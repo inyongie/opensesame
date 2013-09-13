@@ -3,10 +3,66 @@
   <head>
     <title>OpenSesame</title>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=320px, user-scalable=false;">
     <style type="text/css">
       body {
         text-align: center;
-        min-width: 500px;
+        min-width: 300px;
+      }
+      .defaultFont {
+      	font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
+      }
+      #log {
+	overflow-y:hidden;
+	overflow-x:hidden;
+	width:300px; 
+	height:100px;
+	background-color:#cccccc; 
+	margin:auto; 
+	text-align:left;
+      	font-size: 10px;
+      }
+      #msg {
+	background:#fff;
+	width:294px;
+      }
+      .tb5 {
+	border:3px solid #456879;
+	border-radius:10px;
+	height: 30px;
+	margin:	10px 0 10px 0;
+      	font-size: 24px;
+      }
+      .button {
+	width: 300px;
+	border-top: 1px solid #9ff797;
+      	background: #65d66c;
+      	background: -webkit-gradient(linear, left top, left bottom, from(#4b9c3e), to(#65d66c));
+      	background: -webkit-linear-gradient(top, #4b9c3e, #65d66c);
+      	background: -moz-linear-gradient(top, #4b9c3e, #65d66c);
+      	background: -ms-linear-gradient(top, #4b9c3e, #65d66c);
+      	background: -o-linear-gradient(top, #4b9c3e, #65d66c);
+      	padding: 20px 40px;
+      	-webkit-border-radius: 5px;
+      	-moz-border-radius: 5px;
+      	border-radius: 5px;
+      	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+      	-moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+      	box-shadow: rgba(0,0,0,1) 0 1px 0;
+      	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+      	color: white;
+      	font-size: 24px;
+      	text-decoration: none;
+      	vertical-align: middle;
+      }
+      .button:hover {
+	border-top-color: #2e7828;
+      	background: #2e7828;
+      	color: #ccc;
+      }
+	.button:active {
+      	border-top-color: #2d5c1b;
+      	background: #2d5c1b;
       }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -74,12 +130,8 @@
   </head>
  
   <body>
-    <h1>OpenSesame</h1>
-    <div id="log" style="overflow:scroll;width:500px; height:200px;background-color:#ffeeaa; margin:auto; text-align:left">Messages go here</div>
- 
-    <div style="margin:10px">
-      <input type="text" id="msg" style="background:#fff;width:200px"/>
-      <input type="button" id="thebutton" value="Send" />
-    </div>
+    <div id="log" class="defaultFont"></div>
+    <input type="text" class="tb5 defaultFont" id="msg" /><br/>
+    <input type="button" id="thebutton" class="button defaultFont" value="Open Sesame" />
   </body>
 </html>
