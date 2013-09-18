@@ -25,12 +25,6 @@ def createJSONMsg(idval, typeval, message):
 def sendMsgWrapper(session_to,session_from,typeval,message):
   session_to.send(createJSONMsg(session_from, typeval, message))
 
-def moveServo():
-  # TODO: Locking?
-  os.system("echo 5=175 > /dev/servoblaster")
-  time.sleep(5)
-  os.system("echo 5=100 > /dev/servoblaster")
-
 def on_message(ws, message):
   logging.info('Message: '+message)
   decodedMsg = json.loads(message)
@@ -38,7 +32,9 @@ def on_message(ws, message):
     print 'Open request received. Executing request and sending response ' + decodedMsg["id"]
     logging.info('Open request received. Executing request and sending response ' + decodedMsg["id"])
     ws.send(createJSONMsg(decodedMsg["id"], ACK_TYPE, ""))
-    thread.start_new_thread(moveServo, ())
+    os.system("echo 5=200 > /dev/servoblaster")
+    time.sleep(2)
+    os.system("echo 5=100 > /dev/servoblaster")
   else:
     print decodedMsg["message"]
 
@@ -67,7 +63,7 @@ def on_open(ws):
 def init():
   logging.info("A new connection thread is being created.")
   websocket.enableTrace(True)
-  ws = websocket.WebSocketApp("ws://inyongie.com:8888/ws",
+  ws = websocket.WebSocketApp("ws://inyongie.com:443/ws",
                               on_message = on_message,
                               on_error = on_error,
                               on_close = on_close)
