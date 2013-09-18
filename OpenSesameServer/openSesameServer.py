@@ -58,7 +58,13 @@ class WSHandler(tornado.websocket.WebSocketHandler):
       else:
         buildMsg = message
 	sessionFrom = None
-      session_to.write_message(createJSONMsg(sessionFrom, typeval, buildMsg))
+      if session_to == None:
+	logging.error("session_to was NoneType")
+	if not session_from == None:
+	  session_from.write_message(createJSONMsg(None, MISC_MSG_TYPE, "session_to was NoneType"))
+      else:
+	logging.debug("session_to: "+session_to.id.hex)
+	session_to.write_message(createJSONMsg(sessionFrom, typeval, buildMsg))
     global target
     logging.info('Incoming message:' +  message)
 
@@ -84,6 +90,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     for key in self.clients:
       self.clients[key].write_message(createJSONMsg(None, MISC_MSG_TYPE, "A client has left the server"))
 
+# application_ssl = tornado.web.Application([
+#   (r'/ws', WSHandler),
+# ])
+
 application = tornado.web.Application([
   (r'/ws', WSHandler),
 ])
@@ -92,6 +102,13 @@ if __name__ == "__main__":
   global target
   target = None
   logging.basicConfig(filename='pysocketLog.log', filemode='w', format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', level=logging.DEBUG)
+
+#   ssl_server = tornado.httpserver.HTTPServer(application, ssl_options={
+#     "certfile": "test.crt",
+#     "keyfile": "test.key",
+#   })
+#   ssl_server.listen(443)
+
   http_server = tornado.httpserver.HTTPServer(application)
-  http_server.listen(8888)
+  http_server.listen(443)
   tornado.ioloop.IOLoop.instance().start()
