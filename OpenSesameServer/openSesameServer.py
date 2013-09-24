@@ -22,7 +22,7 @@ DEBUG_TYPE = "debug"
 def createJSONMsg(idval, typeval, message):
   retVal =  { "id" : idval, "type" : typeval , "message" : message }
   return json.dumps(retVal)
-#json.loads is decoder
+# Note: json.loads is decoder
 
 class WSHandler(tornado.websocket.WebSocketHandler):
   clients = {}
@@ -46,25 +46,27 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     logging.info('Connection '+self.id.hex+' was opened')
 
   def on_message(self, message):
+    # So... is this acceptable? 
     def sendMsgWrapper(session_to,session_from,typeval,message):
       buildMsg = ""
       sessionFrom = ""
       if typeval == MISC_MSG_TYPE and not session_from == None:
         buildMsg = session_from.id.hex + ": " + message
-	sessionFrom = session_from.id.hex
+      	sessionFrom = session_from.id.hex
       elif typeval == REQUEST_TYPE and not session_from == None:
-	buildMsg = message
-	sessionFrom = session_from.id.hex
+      	buildMsg = message
+      	sessionFrom = session_from.id.hex
       else:
         buildMsg = message
-	sessionFrom = None
+      	sessionFrom = None
       if session_to == None:
-	logging.error("session_to was NoneType")
-	if not session_from == None:
-	  session_from.write_message(createJSONMsg(None, MISC_MSG_TYPE, "session_to was NoneType"))
+      	logging.error("session_to was NoneType")
+      	if not session_from == None:
+      	  session_from.write_message(createJSONMsg(None, MISC_MSG_TYPE, "session_to was NoneType"))
       else:
-	logging.debug("session_to: "+session_to.id.hex)
-	session_to.write_message(createJSONMsg(sessionFrom, typeval, buildMsg))
+      	logging.debug("session_to: "+session_to.id.hex)
+      	session_to.write_message(createJSONMsg(sessionFrom, typeval, buildMsg))
+
     global target
     logging.info('Incoming message:' +  message)
 
@@ -109,6 +111,9 @@ if __name__ == "__main__":
 #   })
 #   ssl_server.listen(443)
 
+# Mobile (Cellular) networks seem to block/disable/mess around with a bunch of ports. 
+# 80 and 443 are the only one I found that worked. The websocket sessions can be encrypted with
+# SSL, but the "untrusted certificate" warning is a major inconvenience for this purpose
   http_server = tornado.httpserver.HTTPServer(application)
   http_server.listen(443)
   tornado.ioloop.IOLoop.instance().start()
