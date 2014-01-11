@@ -32,8 +32,8 @@ def on_message(ws, message):
     print 'Open request received. Executing request and sending response ' + decodedMsg["id"]
     logging.info('Open request received. Executing request and sending response ' + decodedMsg["id"])
     ws.send(createJSONMsg(decodedMsg["id"], ACK_TYPE, ""))
-    os.system("echo 5=200 > /dev/servoblaster")
-    time.sleep(2)
+    os.system("echo 5=165 > /dev/servoblaster")
+    time.sleep(5)
     os.system("echo 5=100 > /dev/servoblaster")
   else:
     print decodedMsg["message"]
