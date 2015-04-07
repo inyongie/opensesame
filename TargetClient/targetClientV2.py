@@ -54,7 +54,7 @@ def on_open(ws):
       var = 1
       while var==1:
         time.sleep(50)
-	ws.send(createJSONMsg(None, DEBUG_TYPE, "raspiping"))
+	    ws.send(createJSONMsg(None, DEBUG_TYPE, "raspiping"))
         logging.info("sending ping")
   logging.info("Initializing Connection")
   ws.send(createJSONMsg(None, STARTUP_TYPE, "iamtheraspi"))
@@ -72,9 +72,9 @@ def init():
 
 if __name__ == "__main__":
   os.system("echo 5=100 > /dev/servoblaster")
-  logging.basicConfig(filename='doorControlLatestLog.log', 
-		      filemode='w', 
-		      format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', 
+  logging.basicConfig(filename='doorControlLatestLog.log',
+		      filemode='w',
+		      format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
 		      level=logging.DEBUG)
   thread.start_new_thread(init, ())
 
