@@ -18,34 +18,42 @@ var ACK_TYPE = "ack";
 var MISC_MSG_TYPE = "miscMsg";
 var DEBUG_TYPE = "debug";
 var ERROR_MSG_TYPE = "errorMsg";
-var SERVER_START_TYPE = "serverStart";
+var DEVICE_ASK_TYPE = "areYouDevice";
 
-var targetDeviceSocket = null;
+var targetDeviceSocket = {};
 
-var requestRoom = "requestRoom";
+// var requestRoom = "requestRoom";
 
 app.get('/', function(req,res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+function getDeviceId(socket) {
+    for(var key in targetDeviceSocket) {
+        if(socket === targetDeviceSocket[key]) {
+            return key;
+        }
+    }
+    return null;
+}
+
 io.on('connection', function(socket) {
     console.log('a user connected');
-    if(targetDeviceSocket === null) {
-        // A cry for connection
-        io.emit(SERVER_START_TYPE, " ");
-    }
+    // A cry for connection
+    io.emit(DEVICE_ASK_TYPE, " ");
 
     socket.on('disconnect', function() {
         console.log('user disconnected');
-        if(socket === targetDeviceSocket) {
-            console.log('The target device has disconnected.');
-            targetDeviceSocket = null;
+        var targetId = getDeviceId(socket);
+        if(targetId !== null) {
+            console.log('Target device ' + targetId + ' has disconnected.');
+            targetDeviceSocket[targetId] = null;
         }
     });
 
     socket.on(STARTUP_TYPE, function(msg){
-        console.log('The Target Device has connected');
-        targetDeviceSocket = socket;
+        console.log('Target Device ' + msg + ' has connected');
+        targetDeviceSocket[msg] = socket;
     });
 
     socket.on(MISC_MSG_TYPE, function(msg){
@@ -56,9 +64,9 @@ io.on('connection', function(socket) {
     socket.on(REQUEST_TYPE, function(msg){
         console.log('request received from client, forwarding request to target...');
         // send message only to the target device
-        if(targetDeviceSocket !== null) {
-            targetDeviceSocket.emit(REQUEST_TYPE,"");
-            socket.join(requestRoom);
+        if(msg in targetDeviceSocket && targetDeviceSocket[msg] !== null) {
+            targetDeviceSocket[msg].emit(REQUEST_TYPE,"");
+            // socket.join(requestRoom);
         } else {
             console.log('Target device is currently not connected');
             socket.emit(ERROR_MSG_TYPE,"Target device is currently not connected");
@@ -69,7 +77,7 @@ io.on('connection', function(socket) {
     socket.on(ACK_TYPE, function(msg){
         console.log('request fulfillment received from target device. returning acknowledgement...');
         // TODO: What is best way to send back ack to requestor?
-        io.to(requestRoom).emit(ACK_TYPE,"serverAck");
+        // io.to(requestRoom).emit(ACK_TYPE,"serverAck");
     });
 
 });
