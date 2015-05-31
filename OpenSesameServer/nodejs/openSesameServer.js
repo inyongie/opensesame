@@ -18,7 +18,7 @@ var ACK_TYPE = "ack";
 var MISC_MSG_TYPE = "miscMsg";
 var DEBUG_TYPE = "debug";
 var ERROR_MSG_TYPE = "errorMsg";
-var SERVER_START_TYPE = "serverStart";
+var DEVICE_ASK_TYPE = "areYouDevice";
 
 var targetDeviceSocket = {};
 
@@ -39,10 +39,8 @@ function getDeviceId(socket) {
 
 io.on('connection', function(socket) {
     console.log('a user connected');
-    if(targetDeviceSocket === null) {
-        // A cry for connection
-        io.emit(SERVER_START_TYPE, " ");
-    }
+    // A cry for connection
+    io.emit(DEVICE_ASK_TYPE, " ");
 
     socket.on('disconnect', function() {
         console.log('user disconnected');
@@ -66,7 +64,7 @@ io.on('connection', function(socket) {
     socket.on(REQUEST_TYPE, function(msg){
         console.log('request received from client, forwarding request to target...');
         // send message only to the target device
-        if(targetDeviceSocket[msg] !== null) {
+        if(msg in targetDeviceSocket && targetDeviceSocket[msg] !== null) {
             targetDeviceSocket[msg].emit(REQUEST_TYPE,"");
             // socket.join(requestRoom);
         } else {

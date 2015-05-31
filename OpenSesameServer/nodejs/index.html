@@ -2,6 +2,8 @@
 <html>
     <head>
         <title>OpenSesame Node Beta</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=320px, user-scalable=false;">
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font: 13px Helvetica, Arial; }
@@ -23,12 +25,14 @@
         <script>
             var socket = io();
             $('form').submit(function(){
-                if($('#m').val()==="open") {
-                    socket.emit('request', 'frontDoor');
-                } else {
-                    socket.emit('miscMsg', $('#m').val());
+                if($('#m').val().length > 0) {
+                    if($('#m').val()==="open") {
+                        socket.emit('request', 'frontDoor');
+                    } else {
+                        socket.emit('miscMsg', $('#m').val());
+                    }
+                    $('#m').val('');
                 }
-                $('#m').val('');
                 return false;
             });
 
