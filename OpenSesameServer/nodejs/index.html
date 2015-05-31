@@ -24,7 +24,7 @@
             var socket = io();
             $('form').submit(function(){
                 if($('#m').val()==="open") {
-                    socket.emit('request', $('#m').val());
+                    socket.emit('request', 'frontDoor');
                 } else {
                     socket.emit('miscMsg', $('#m').val());
                 }
