@@ -40,7 +40,7 @@ function getDeviceId(socket) {
 io.on('connection', function(socket) {
     console.log('a user connected');
     // A cry for connection
-    io.emit(DEVICE_ASK_TYPE, " ");
+    socket.emit(DEVICE_ASK_TYPE, " ");
 
     socket.on('disconnect', function() {
         console.log('user disconnected');
@@ -68,10 +68,9 @@ io.on('connection', function(socket) {
             targetDeviceSocket[msg].emit(REQUEST_TYPE,"");
             // socket.join(requestRoom);
         } else {
-            console.log('Target device is currently not connected');
-            socket.emit(ERROR_MSG_TYPE,"Target device is currently not connected");
+            console.log('Target device ' + msg + ' is currently not connected');
+            socket.emit(ERROR_MSG_TYPE,'Target device ' + msg + ' is currently not connected');
         }
-        // TODO: Although currently to only one device, how to scale to more devices?
     });
 
     socket.on(ACK_TYPE, function(msg){
