@@ -3,7 +3,7 @@
 
 var app = require('express')();
 var httpServer = require('http').Server(app);
-var io = require('socket.io')(httpServer);
+var io = require('socket.io')(httpServer, { pingTimeout: 60000 });
 
 // MESSAGE TYPES
 // STARTUP_TYPE: Message Type that target device will send to open session
@@ -65,7 +65,7 @@ io.on('connection', function(socket) {
         console.log('request received from client, forwarding request to target...');
         // send message only to the target device
         if(msg in targetDeviceSocket && targetDeviceSocket[msg] !== null) {
-            targetDeviceSocket[msg].emit(REQUEST_TYPE,"");
+            targetDeviceSocket[msg].emit(REQUEST_TYPE, socket.id);
             // socket.join(requestRoom);
         } else {
             console.log('Target device ' + msg + ' is currently not connected');
@@ -75,8 +75,7 @@ io.on('connection', function(socket) {
 
     socket.on(ACK_TYPE, function(msg){
         console.log('request fulfillment received from target device. returning acknowledgement...');
-        // TODO: What is best way to send back ack to requestor?
-        // io.to(requestRoom).emit(ACK_TYPE,"serverAck");
+        io.to(msg).emit(MISC_MSG_TYPE,'request fulfillment received from target device. returning acknowledgement...');
     });
 
 });
