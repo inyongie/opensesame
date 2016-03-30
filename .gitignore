@@ -1,4 +1,6 @@
 /OpenSesameServer/nodejs/*.log
 /OpenSesameServer/*.log
 /OpenSesameServer/nodejs/node_modules/
+/TargetClient/*.log
+/*.log
 
