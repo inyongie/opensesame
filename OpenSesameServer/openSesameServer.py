@@ -27,6 +27,9 @@ def createJSONMsg(idval, typeval, message):
 class WSHandler(tornado.websocket.WebSocketHandler):
   clients = {}
 
+  def check_origin(self, origin):
+    return True
+
   # removeKey
   # Completely Removes the key-value pair from the map
   # Params

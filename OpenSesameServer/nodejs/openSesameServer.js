@@ -3,7 +3,7 @@
 
 var app = require('express')();
 var httpServer = require('http').Server(app);
-var io = require('socket.io')(httpServer, { pingTimeout: 60000 });
+var io = require('socket.io')(httpServer, { pingTimeout: 10000 });
 
 // MESSAGE TYPES
 // STARTUP_TYPE: Message Type that target device will send to open session
@@ -19,6 +19,8 @@ var MISC_MSG_TYPE = "miscMsg";
 var DEBUG_TYPE = "debug";
 var ERROR_MSG_TYPE = "errorMsg";
 var DEVICE_ASK_TYPE = "areYouDevice";
+var PING_TYPE = "ping";
+var PONG_TYPE = "pong";
 
 var targetDeviceSocket = {};
 
@@ -37,10 +39,18 @@ function getDeviceId(socket) {
     return null;
 }
 
+function wakeUpDevices(socket) {
+    for(var key in targetDeviceSocket) {
+        targetDeviceSocket[key].emit(PING_TYPE,socket.id);  
+    }
+}
+
 io.on('connection', function(socket) {
     console.log('a user connected');
     // A cry for connection
     socket.emit(DEVICE_ASK_TYPE, " ");
+
+    wakeUpDevices(socket);
 
     socket.on('disconnect', function() {
         console.log('user disconnected');
@@ -71,6 +81,10 @@ io.on('connection', function(socket) {
             console.log('Target device ' + msg + ' is currently not connected');
             socket.emit(ERROR_MSG_TYPE,'Target device ' + msg + ' is currently not connected');
         }
+    });
+
+    socket.on(PONG_TYPE, function(msg){
+        console.log('pong received');
     });
 
     socket.on(ACK_TYPE, function(msg){
